@@ -17,10 +17,10 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        File textFile = new File("basket.txt");
+        File textFile = new File("basket.bin");
         if (textFile.exists()) {
             System.out.println("Файл найден");
-            basket = Basket.loadFromTxtFile(textFile);
+            basket = Basket.loadFromBinFile(textFile);
         } else {
             System.out.println("Файл создан");
             basket = new Basket(setProduct(), setPrices());
