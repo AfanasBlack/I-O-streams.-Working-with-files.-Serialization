@@ -1,50 +1,46 @@
+import java.io.File;
 import java.util.Scanner;
 
 public class Main {
+
+    static Basket basket;
+
+    public static String[] setProduct() {
+        String[] products = new String[] {"1. Хлеб", "2. Яблоки", "3. Молоко"};
+        return products;
+    }
+
+    public static int[] setPrices() {
+        int[] prices = new int[] {100, 200, 300};
+        return prices;
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
-        String[] products = {"1. Хлеб ", "2. Яблоки ", "3. Молоко "};
-
-        int[] prices = {100, 200, 300};
-
-        for (int i = 0; i < products.length; i++) {
-            System.out.println(products[i] + prices[i] + " руб/шт");
+        File textFile = new File("basket.txt");
+        if (textFile.exists()) {
+            System.out.println("Файл найден");
+            basket = Basket.loadFromTxtFile(textFile);
+        } else {
+            System.out.println("Файл создан");
+            basket = new Basket(setProduct(), setPrices());
         }
 
-        int[] basket = {0, 0, 0};
-
-        int sumProducts = 0;
+        basket.printPurchases();
 
         while (true) {
             System.out.println("Выберите товар и количество или введите end");
             String input = scanner.nextLine();
+
             if ("end".equals(input)) {
                 break;
             }
+
             String[] amount = input.split(" ");
-            int productNumber = Integer.parseInt(amount[0]) - 1;
-            int productCount = Integer.parseInt(amount[1]);
-
-            if (productNumber == 0) {
-                basket[0] += productCount;
-            } else if (productNumber == 1) {
-                basket[1] += productCount;
-            } else {
-                basket[2] += productCount;
-            }
-
-            if (sumProducts == 0) {
-                sumProducts += ((basket[0] * prices[0]) + (basket[1] * prices[1]) + (basket[2] * prices[2]));
-            } else {
-                sumProducts = 0;
-                sumProducts += ((basket[0] * prices[0]) + (basket[1] * prices[1]) + (basket[2] * prices[2]));
-            }
+            long productNumber = Integer.parseInt(amount[0]) - 1;
+            long productCount = Integer.parseInt(amount[1]);
+            basket.addToCart(productNumber, productCount);
         }
-        System.out.println("Ваша корзина:");
-        System.out.println(products[0] + basket[0] + " шт " + (basket[0] * prices[0]) + " руб в сумме");
-        System.out.println(products[1] + basket[1] + " шт " + (basket[1] * prices[1]) + " руб в сумме");
-        System.out.println(products[2] + basket[2] + " шт " + (basket[2] * prices[2]) + " руб в сумме");
-        System.out.println("Итого: " + sumProducts + " руб");
+        basket.printCart();
     }
 }
