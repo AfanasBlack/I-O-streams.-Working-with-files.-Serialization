@@ -1,32 +1,52 @@
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
 
     static Basket basket;
 
-    public static String[] setProduct() {
-        String[] products = new String[] {"1. Хлеб", "2. Яблоки", "3. Молоко"};
-        return products;
-    }
+    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
 
-    public static int[] setPrices() {
-        int[] prices = new int[] {100, 200, 300};
-        return prices;
-    }
+        File txtFile = new File("basket.json");
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        File textFile = new File("basket.txt");
-        if (textFile.exists()) {
-            System.out.println("Файл найден");
-            basket = Basket.loadFromTxtFile(textFile);
-        } else {
-            System.out.println("Файл создан");
-            basket = new Basket(setProduct(), setPrices());
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse("shop.xml");
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        boolean doLoad = Boolean.parseBoolean(xPath
+                .compile("/config/load/enabled")
+                .evaluate(doc));
+        String loadFileName = xPath
+                .compile("/config/load/fileName")
+                .evaluate(doc);
+        String loadFormat = xPath
+                .compile("/config/load/format")
+                .evaluate(doc);
+
+        if (doLoad) {
+            try {
+                File loadFile = new File(loadFileName);
+                if ("json".equals(loadFormat)) {
+                    basket = Basket.loadFromJSON(loadFile);
+                }
+            } catch (FileNotFoundException e) {
+                basket = new Basket(new String[]{"1. Хлеб", "2. Яблоки", "3. Молоко"}, new int[]{100, 200, 300});
+            }
         }
 
         basket.printPurchases();
+        Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("Выберите товар и количество или введите end");
@@ -37,10 +57,14 @@ public class Main {
             }
 
             String[] amount = input.split(" ");
-            long productNumber = Integer.parseInt(amount[0]) - 1;
-            long productCount = Integer.parseInt(amount[1]);
+            int productNumber = Integer.parseInt(amount[0]) - 1;
+            int productCount = Integer.parseInt(amount[1]);
             basket.addToCart(productNumber, productCount);
+            ClientLog clientLog = new ClientLog(productNumber + 1, productCount);
+            clientLog.log();
+            basket.seveJSON(txtFile);
         }
+
         basket.printCart();
     }
 }
