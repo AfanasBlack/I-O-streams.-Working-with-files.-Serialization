@@ -54,54 +54,5 @@ public class Basket {
             return gson.fromJson(json, Basket.class);
         }
     }
-
-//    public void saveTxt(File textFile) throws IOException {
-//
-//        try (PrintWriter out = new PrintWriter(textFile);) {
-//            for (int i = 0; i < basket.length; i++) {
-//                out.print(products[i] + "," + basket[i] + "," + prices[i] + "\n");
-//            }
-//        } catch (IOException ex) {
-//            System.out.println(ex.getMessage());
-//        }
-//    }
-//
-//    public static Basket loadFromTxtFile(File textFile) {
-//        try (BufferedReader reader = new BufferedReader(new FileReader(textFile))) {
-//            String line = reader.readLine();
-//            String[] newProduct = new String[0];
-//            int[] newBasket = new int[0];
-//            int[] newPrice = new int[0];
-//            while (line != null) {
-//                String[] lineValues = line.split(",");
-//                for (int value = 0; value < lineValues.length; value++) {
-//                    if (value == 0) newProduct = addArrayString(newProduct.length, newProduct, String.valueOf(lineValues[value]));
-//                    if (value == 1) newBasket = addArrayInt(newBasket.length, newBasket, Integer.parseInt(lineValues[value]));
-//                    if (value == 2) newPrice = addArrayInt(newPrice.length, newPrice, Integer.parseInt(lineValues[value]));
-//                }
-//                line = reader.readLine();
-//            }
-//            Basket basket = new Basket(newProduct, newPrice);
-//            basket.basket = newBasket;
-//            return basket;
-//        } catch (IOException e) {
-//            System.out.println("Загрузить корзину не удалось!");
-//        }
-//        return null;
-//    }
-//
-//    public static int[] addArrayInt(int num, int[] arr, int x) {
-//        int[] newarr = new int[num + 1];
-//        if (num >= 0) System.arraycopy(arr, 0, newarr, 0, num);
-//        newarr[num] = x;
-//        return newarr;
-//    }
-//
-//    public static String[] addArrayString(int num, String[] arr, String x) {
-//        String[] newarr = new String[num + 1];
-//        if (num >= 0) System.arraycopy(arr, 0, newarr, 0, num);
-//        newarr[num] = x;
-//        return newarr;
-//    }
 }
 

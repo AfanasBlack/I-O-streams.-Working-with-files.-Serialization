@@ -34,6 +34,9 @@ public class Main {
                 .compile("/config/load/format")
                 .evaluate(doc);
 
+        boolean save = Boolean.parseBoolean(xPath.compile("/config/save/enabled").evaluate(doc));
+        boolean log = Boolean.parseBoolean(xPath.compile("/config/log/enabled").evaluate(doc));
+
         if (doLoad) {
             try {
                 File loadFile = new File(loadFileName);
@@ -60,9 +63,14 @@ public class Main {
             int productNumber = Integer.parseInt(amount[0]) - 1;
             int productCount = Integer.parseInt(amount[1]);
             basket.addToCart(productNumber, productCount);
-            ClientLog clientLog = new ClientLog(productNumber + 1, productCount);
-            clientLog.log();
-            basket.seveJSON(txtFile);
+            if (log) {
+                ClientLog clientLog = new ClientLog(productNumber + 1, productCount);
+                clientLog.log();
+            }
+            if (save) {
+                basket.seveJSON(txtFile);
+            }
+
         }
 
         basket.printCart();
